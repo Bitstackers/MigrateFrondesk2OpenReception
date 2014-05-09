@@ -1,0 +1,14 @@
+#install mdbTools
+sudo apt-get install mdbtools
+
+#Find tables
+mdb-tables ACS4000TH.mdb
+
+
+#Extract Data
+mdb-export -d ';' ACS4000TH.mdb T_Virksomhed > T_Virksomhed.csv
+mdb-export -d ';' ACS4000TH.mdb T_Medarbejder > T_Medarbejder.csv
+
+
+#Remarks
+CsvParser er blevet ændret i, fordi den smed en "unexpected empty line".
