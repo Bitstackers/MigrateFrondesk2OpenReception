@@ -1,9 +1,9 @@
 part of adaheads.server.database;
 
-Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled) {
+Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled, bool data_contact, bool status_email) {
   String sql = '''
-    INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, phonenumbers, attributes, enabled)
-    VALUES (@reception_id, @contact_id, @wants_messages, @phonenumbers, @attributes, @enabled);
+    INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, phonenumbers, attributes, enabled, data_contact, status_email)
+    VALUES (@reception_id, @contact_id, @wants_messages, @phonenumbers, @attributes, @enabled, @data_contact, @status_email);
   ''';
 
   Map parameters =
@@ -12,7 +12,9 @@ Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, b
      'wants_messages'       : wantMessages,
      'phonenumbers'         : phonenumbers == null ? '[]' : JSON.encode(phonenumbers),
      'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
-     'enabled'              : enabled};
+     'enabled'              : enabled,
+     'data_contact': data_contact,
+     'status_email': status_email};
 
   return execute(pool, sql, parameters);
 }

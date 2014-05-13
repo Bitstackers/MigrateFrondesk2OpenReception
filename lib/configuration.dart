@@ -15,6 +15,9 @@ class Configuration {
   int get dbport => int.parse(parsedArgs['dbport']);
   String get dbname => parsedArgs['dbname'];
 
+  String _seperator = ';';
+  String get seperator => _seperator;
+
   Configuration._();
 
   factory Configuration(List<String> arguments) {
@@ -93,4 +96,14 @@ class Configuration {
   bool _hasArgument(String key, ArgResults args) =>
       args.options.contains(key) && args[key] != null && args[key].trim() != '';
 
+  String toString() =>'''
+    Virksomhedsfil: $company
+    Medarbejderfil: $employee
+    Database:
+      Host: $dbhost
+      Port: $dbport
+      User: $dbuser
+      Pass: ${dbpassword.codeUnits.map((_) => '*').join()}
+      Name: $dbname 
+  ''';
 }

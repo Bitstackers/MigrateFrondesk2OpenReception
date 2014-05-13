@@ -12,7 +12,7 @@ AccessInstance Convert(Configuration config) {
 
   File VirkFile = new File(config.company);
   String VirkData = VirkFile.readAsStringSync();
-  CsvParser cp = new CsvParser(VirkData, seperator:';', quotemark:'"', lineend: '\n', setHeaders: true);
+  CsvParser cp = new CsvParser(VirkData, seperator:config.seperator, quotemark:'"', lineend: '\n', setHeaders: true);
   while(cp.moveNext()) {
     Map<String, String> tokens = cp.current.toMap(cp.headers);
     Virksomhed virk = mapVirksomhed(tokens);
@@ -22,7 +22,7 @@ AccessInstance Convert(Configuration config) {
 
   File MedFile = new File(config.employee);
   String MedData = MedFile.readAsStringSync();
-  cp = new CsvParser(MedData, seperator:';', quotemark:'"', lineend: '\n', setHeaders: true);
+  cp = new CsvParser(MedData, seperator:config.seperator, quotemark:'"', lineend: '\n', setHeaders: true);
   while(cp.moveNext()) {
     Map<String, String> tokens = cp.current.toMap(cp.headers);
     Medarbejder med = mapMedarbejder(tokens);

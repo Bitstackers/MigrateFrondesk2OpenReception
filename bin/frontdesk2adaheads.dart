@@ -7,20 +7,23 @@ import '../lib/frontdesk_model.dart';
 import '../lib/adaheads_model.dart';
 import '../lib/database.dart';
 
+int phoneNumberId = 1;
+
 void main(List<String> args) {
   Configuration config = new Configuration(args);
-
   // Parse Arguments
   if(config.showHelp()) {
     print(config.getUsage());
   } else if(config.isValid()) {
+    print(config);
     AccessInstance acc = Convert(config);
     //acc.virksomheder.forEach((v) => print(v.VirkIDnr));
 
     setupDatabase(config).then((Database db) {
       return Future.wait(acc.virksomheder.map((virk) =>
           createOrganization(db, virk, acc.medarbejder.where((m) => m.VirkID == virk.VirkIDnr).toList())))
-          .then((_) => db.close());
+          .whenComplete(() => db.close())
+          .then((_) {print('Completed');});
     });
   }
 }
@@ -37,9 +40,9 @@ Future createReception(Virksomhed virk, Database db, int orgId, List<Medarbejder
   Reception recep = new Reception()
     ..full_name = virk.VirkNavn
     ..organization_id = orgId
-    ..handlings = [virk.VirkAktion, virk.VirkTHmail]
+    ..handlings = [virk.VirkNote, virk.VirkAktion, virk.VirkTHmail]
     ..product = virk.VirkProduktbesk
-    ..other = virk.VirkNote + " " + virk.VirkVigtigInfo
+    ..other =  virk.VirkVigtigInfo
     ..greeting = virk.VirkVelkomst
     ..addresses = [virk.Virkbeliggenhed,
                   '${virk.VirkPostnr} ${virk.VirkPostby} ${virk.VirkAdr1}',
@@ -60,24 +63,65 @@ Future createReception(Virksomhed virk, Database db, int orgId, List<Medarbejder
 
 Future createContact(Database db, int receptionId, Medarbejder med) {
   return db.createContact(med.MedNavn, 'human', true).then((int contactId) {
-    bool wantMessages = true;
     ReceptionContact rc = new ReceptionContact()
       ..receptionId = receptionId
       ..contactId = contactId
-      ..wantsMessages = true
+      ..wantsMessages = med.MedIngenFax == '0' && med.MedIngenEmail == '0' && med.MedIngenSMS == '0'
       ..position = med.MedStilling
       ..department = med.MedAfd
       ..emailaddresses = [med.MedEmail, med.MedPrivatEmail] //TODO Message table
       ..responsibility = med.MedAnsvarsomraade
       ..info = med.MedNote
       ..phoneNumbers = [
-        new Phone()..kind = 'PSTN'..value = med.MedDirTlf,
-        new Phone()..kind = 'PSTN'..value = med.MedMobil,
-        new Phone()..kind = 'PSTN'..value = med.MedHasterTlf,
-        new Phone()..kind = 'PSTN'..value = med.MedPrivTlf
+        new Phone()
+          ..id = phoneNumberId++
+          ..kind = 'PSTN'
+          ..value = med.MedDirTlf
+          ..description = 'Direkte'
+          ..bill_type = 'mobile'
+          ..confidential = med.MedDirTlfOpl == '1' ? true : false,
+
+        new Phone()
+          ..id = phoneNumberId++
+          ..kind = 'PSTN'
+          ..value = med.MedMobil
+          ..description = 'mobil'
+          ..bill_type = 'mobile'
+          ..confidential = med.MedMobilOpl == '1' ? true : false,
+
+        new Phone()
+          ..id = phoneNumberId++
+          ..kind = 'PSTN'
+          ..value = med.MedHasterTlf
+          ..description = 'Haster'
+          ..bill_type = 'mobile'
+          ..confidential = med.MedHasterTlfOpl == '1' ? true : false,
+
+        new Phone()
+          ..id = phoneNumberId++
+          ..kind = 'PSTN'
+          ..value = med.MedPrivTlf
+          ..description = 'privat'
+          ..bill_type = 'mobile'
+          ..confidential = med.MedPrivTlfOpl == '1' ? true: false
       ]
-    ..handling = [med.MedTHMail]
+      ..handling = [med.MedTHMail]
+      ..statusEmail = med.statusmail == '1'
+      ..branch = '${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}';
     ;
+
+    if(med.MedPrimNummer == '2') {
+      Phone p = rc.phoneNumbers[1];
+      rc.phoneNumbers.removeAt(1);
+      rc.phoneNumbers.insert(0, p);
+
+    } else if (med.MedPrimNummer == '3') {
+      Phone p = rc.phoneNumbers[2];
+      rc.phoneNumbers.removeAt(2);
+      rc.phoneNumbers.insert(0, p);
+    }
+
+    rc.phoneNumbers = rc.phoneNumbers.where((e) => e.value.isNotEmpty).toList();
 /*
   String MedAdr;
   String MedPostnr;
@@ -104,7 +148,7 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
  */
     Map attributes = rc.attributes;
     attributes['frontdesk'] = med;
-    return db.createReceptionContact(rc.receptionId, rc.contactId, rc.wantsMessages, rc.phoneNumbers, attributes, true);
+    return db.createReceptionContact(rc.receptionId, rc.contactId, rc.wantsMessages, rc.phoneNumbers, attributes, true, rc.dataContact, rc.statusEmail);
   });
 }
 
