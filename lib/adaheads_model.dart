@@ -24,7 +24,7 @@ List<String> priorityListFromJson(Map json, String key) {
       List<String> list = new List<String>();
 
       rawList.sort((a, b) => a['priority'] - b['priority']);
-      //Sorte by priority.
+      //Sorted by priority.
       for(Map item in json[key]) {
         list.add(item['value']);
       }
@@ -50,6 +50,7 @@ List priorityListToJson(List<String> list) {
       'priority': priority,
       'value': item
     });
+    priority += 1;
   }
 
   return result;
