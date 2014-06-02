@@ -88,14 +88,11 @@ class Database {
      ************ Reception Contacts ***************
    */
 
-  Future<int> createReceptionContact(int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled, bool data_contact, bool status_email) =>
-      _createReceptionContact(pool, receptionId, contactId, wantMessages, phonenumbers, attributes, enabled, data_contact, status_email);
+  Future<int> createReceptionContact(int receptionId, int contactId, bool wantMessages, List phonenumbers, Map distributionList, Map attributes, bool enabled, bool data_contact, bool status_email) =>
+      _createReceptionContact(pool, receptionId, contactId, wantMessages, phonenumbers, distributionList, attributes, enabled, data_contact, status_email);
 
   Future<int> deleteReceptionContact(int receptionId, int contactId) =>
       _deleteReceptionContact(pool, receptionId, contactId);
-
-  Future<List<adaheads_model.Organization>> getAContactsOrganizationList(int contactId) =>
-      _getAContactsOrganizationList(pool, contactId);
 
   Future<int> updateReceptionContact(int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled) =>
       _updateReceptionContact(pool, receptionId, contactId, wantMessages, phonenumbers, attributes, enabled);

@@ -40,7 +40,7 @@ List<String> priorityListFromJson(Map json, String key) {
 }
 
 List priorityListToJson(List<String> list) {
-  if(list == null) return null;
+  if(list == null) return [];
 
   List<Map> result = new List<Map>();
 

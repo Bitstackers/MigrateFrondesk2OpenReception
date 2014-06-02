@@ -5,7 +5,7 @@ class ReceptionContact {
   bool contactEnabled;
   int receptionId;
   bool wantsMessages;
-  int distributionListId;
+  Map distributionList;
   List<Phone> phoneNumbers;
 
   bool dataContact = false;
@@ -108,18 +108,20 @@ class ReceptionContact {
   }
 
   ReceptionContact() {
+    distributionList = new Map();
+
     attributes = {
-      'department': null,
-      'info': null,
-      'position': null,
-      'relations': null,
-      'responsibility': null,
-      'backup': null,
-      'emailaddresses': null,
-      'handling': null,
+      'department': '',
+      'info': '',
+      'position': '',
+      'relations': '',
+      'responsibility': '',
+      'backup': [],
+      'emailaddresses': [],
+      'handling': [],
       //'telephonenumbers': priorityListToJson(telephonenumbers),
-      'workhours': null,
-      'tags': null,
+      'workhours': [],
+      'tags': [],
       'branch': ''
     };
   }
@@ -130,7 +132,7 @@ class ReceptionContact {
       ..contactEnabled = json['contact_enabled']
       ..receptionId = json['reception_id']
       ..wantsMessages = json['wants_messages']
-      ..distributionListId = json['distribution_list_id']
+      ..distributionList = json['distributionList']
       ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map json) => new Phone.fromJson(json)).toList();
 
     if (json.containsKey('attributes')) {

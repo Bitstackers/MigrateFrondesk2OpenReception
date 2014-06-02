@@ -1,6 +1,6 @@
 part of adaheads.model;
 
-class Reception {  
+class Reception {
   int id;
   int organization_id;
   String full_name;
@@ -11,7 +11,7 @@ class Reception {
   String customertype;
   String extradatauri;
   bool enabled;
-  
+
   List<String> addresses = [];
   List<String> alternatenames = [];
   List<String> bankinginformation = [];
@@ -22,13 +22,13 @@ class Reception {
   List<String> registrationnumbers = [];
   List<String> telephonenumbers = [];
   List<String> websites = [];
-  
+
   Map get attributes =>
     {
-      'product': product,
-      'other': other,
-      'greeting': greeting,
-      'customertype': customertype,
+      'product': product != null ? product : '',
+      'other': other != null ? other : '',
+      'greeting': greeting != null ? greeting : '',
+      'customertype': customertype != null ? customertype : '',
       'addresses': priorityListToJson(addresses),
       'alternatenames': priorityListToJson(alternatenames),
       'bankinginformation': priorityListToJson(bankinginformation),
@@ -40,16 +40,16 @@ class Reception {
       'telephonenumbers': priorityListToJson(telephonenumbers),
       'websites': priorityListToJson(websites)
     };
-  
+
   /**
    * Default constructor
    */
   Reception();
-  
+
   Reception.fromDB(int this.id, int this.organization_id, String this.full_name, String this.uri, Map attributes, String this.extradatauri, bool this.enabled) {
-    
+
   }
-  
+
   factory Reception.fromJson(Map json) {
     Reception reception = new Reception()
       ..id = json['id']
@@ -57,7 +57,7 @@ class Reception {
       ..full_name = json['full_name']
       ..uri = json['uri']
       ..enabled = json['enabled'];
-    
+
     if(json.containsKey('attributes')) {
       Map attributes = json['attributes'];
 
@@ -66,7 +66,7 @@ class Reception {
         ..other = stringFromJson(attributes, 'other')
         ..greeting = stringFromJson(attributes, 'greeting')
         ..customertype = stringFromJson(attributes, 'customertype')
-        
+
         ..addresses = priorityListFromJson(attributes, 'addresses')
         ..alternatenames = priorityListFromJson(attributes, 'alternatenames')
         ..bankinginformation = priorityListFromJson(attributes, 'bankinginformation')
@@ -78,11 +78,11 @@ class Reception {
         ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
         ..websites = priorityListFromJson(attributes, 'websites');
     }
-    
+
     return reception;
   }
-  
-  String toJson() {    
+
+  String toJson() {
     Map data = {
       'id': id,
       'orgaanization_id': organization_id,
@@ -91,7 +91,7 @@ class Reception {
       'enabled': enabled,
       'attributes': attributes
     };
-    
+
     return JSON.encode(data);
   }
 }

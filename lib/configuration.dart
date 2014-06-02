@@ -51,6 +51,7 @@ class Configuration {
     } else {
       File file = new File(parsedArgs['company']);
       if(!file.existsSync()) {
+        print('Missing file ${parsedArgs['company']}');
         return false;
       }
     }
@@ -61,6 +62,7 @@ class Configuration {
     } else {
       File file = new File(parsedArgs['employee']);
       if(!file.existsSync()) {
+        print('Missing file ${parsedArgs['employee']}');
         return false;
       }
     }

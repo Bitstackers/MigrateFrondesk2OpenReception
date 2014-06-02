@@ -25,12 +25,12 @@ class Phone {
   }
 
   Map toJson() => {
-    'id': id,
-    'value': value,
-    'kind': kind,
-    'description': description,
-    'bill_type': bill_type,
-    'tag': tag,
-    'confidential': confidential};
+    'id': id != null ? id : 0,
+    'value': value != null ? value : '',
+    'kind': kind != null ? kind : '',
+    'description': description != null ? description : '',
+    'bill_type': bill_type != null ? bill_type : '',
+    'tag': tag != null ? tag : '',
+    'confidential': confidential != null ? confidential : false};
 }
 
