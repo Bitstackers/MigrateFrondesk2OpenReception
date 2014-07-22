@@ -8,6 +8,7 @@ class Reception {
   String product;
   String other;
   String greeting;
+  String shortgreeting;
   String customertype;
   String extradatauri;
   bool enabled;
@@ -28,6 +29,7 @@ class Reception {
       'product': product != null ? product : '',
       'other': other != null ? other : '',
       'greeting': greeting != null ? greeting : '',
+      'shortgreeting': shortgreeting != null ? shortgreeting : (greeting != null ? greeting : ''),
       'customertype': customertype != null ? customertype : '',
       'addresses': priorityListToJson(addresses),
       'alternatenames': priorityListToJson(alternatenames),
