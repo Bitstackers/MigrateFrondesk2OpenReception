@@ -79,7 +79,6 @@ Future createOrganization(Database db, Virksomhed virk, List<Medarbejder>
 
 Future createReception(Virksomhed virk, Database db, int
     orgId, List<Medarbejder> medarbejdere) {
-  String phonenumber = virk.VirkTH_nr;
 
   Reception recep = new Reception()
       ..full_name = virk.VirkNavn
@@ -98,7 +97,9 @@ Future createReception(Virksomhed virk, Database db, int
           virk.VirkGiro_konto])
       ..websites = noEmptyStrings([virk.VirkWWW])
       ..openinghours = noEmptyStrings([virk.VirkKontortid])
-      ..emailaddresses = noEmptyStrings([virk.VirkEmail]);
+      ..emailaddresses = noEmptyStrings([virk.VirkEmail])
+      ..receptionNumber = virk.VirkTH_nr
+      ;
 
   if (virk.VirkFax1 != null && virk.VirkFax1.trim().isNotEmpty) {
     recep.telephonenumbers.add('FAX ${virk.VirkFax1}');
@@ -127,14 +128,14 @@ Future createReception(Virksomhed virk, Database db, int
   Map attributes = recep.attributes;
   attributes['frontdesk'] = virk;
   return db.createReception(recep.organization_id, recep.full_name, attributes,
-      recep.extradatauri, true, phonenumber).then((int id) {
+      recep.extradatauri, true, recep.receptionNumber).then((int id) {
     return Future.wait(medarbejdere.map((med) => createContact(db, id, med)));
   });
 }
 
 Future createContact(Database db, int receptionId, Medarbejder med) {
   String contactType = med.MedNavn.startsWith('.') ? 'function' : 'human';
-  String contactName = med.MedNavn; //removeLeadingDots(med.MedNavn);
+  String contactName = removeLeadingDots(med.MedNavn); //med.MedNavn;
 
   return db.createContact(contactName, contactType, true).then((int contactId) {
     ReceptionContact rc = new ReceptionContact()
@@ -151,7 +152,15 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
         ..handling = noEmptyStrings([med.MedTHMail])
         ..statusEmail = med.statusmail == '1'
         ..branch = '${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}'.trim();
-    ;
+
+    rc.distributionList = {
+      'to': [{
+        'reception_id': rc.receptionId,
+        'contact_id': rc.contactId
+      }],
+      'cc':[],
+      'bcc': []
+    };
 
     List<Phone> phoneNumbers = [makePhone(phoneNumberId++, med.MedDirTlf,
         med.MedDirTlfOpl, 'Direkte'), makePhone(phoneNumberId++, med.MedMobil,
@@ -195,10 +204,97 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
   String MedStdBesked; //Bruges til at fortælle om der skal spørge efter noget specifikt. [blah] fjernes fra emails.
   String MedPrimNummer; //Indikere hvilke numer er det primær
  */
+
     Map attributes = rc.attributes;
     attributes['frontdesk'] = med;
     return db.createReceptionContact(rc.receptionId, rc.contactId,
         rc.wantsMessages, rc.phoneNumbers, rc.distributionList, attributes, true, rc.dataContact,
-        rc.statusEmail);
+        rc.statusEmail)
+        .whenComplete(() {
+      List<Endpoint> endpoints = new List<Endpoint>();
+
+      if(med.MedEmail != null && med.MedEmail.trim().isNotEmpty) {
+        Iterable<String> rawEmails = med.MedEmail.split(';').map((e) => e.trim());
+
+        for(String rawEmail in rawEmails) {
+          Endpoint email = extractEndpoint(rawEmail)
+              ..contactId = rc.contactId
+              ..receptionId = rc.receptionId
+              ..enabled = true
+              ..confidential = false
+              ..priority = 0
+              ..description = 'Firma E-mail';
+
+          if(!containsEndpoint(endpoints, email)) {
+            endpoints.add(email);
+          }
+        }
+      }
+
+      if(med.MedPrivatEmail != null && med.MedPrivatEmail.trim().isNotEmpty) {
+        Iterable<String> rawEmails = med.MedPrivatEmail.split(';').map((e) => e.trim());
+
+        for(String rawEmail in rawEmails) {
+          Endpoint email = extractEndpoint(rawEmail)
+            ..contactId = rc.contactId
+            ..receptionId = rc.receptionId
+            ..enabled = true
+            ..confidential = false
+            ..priority = 0
+            ..description = 'Private E-mail';
+
+          if(!containsEndpoint(endpoints, email)) {
+            endpoints.add(email);
+          }
+        }
+      }
+
+      if(med.MedSMS != null && med.MedSMS.trim().isNotEmpty) {
+        Iterable<String> rawEmails = med.MedSMS.split(';').map((e) => e.trim());
+
+        for(String rawEmail in rawEmails) {
+          Endpoint email = extractEndpoint(rawEmail);
+
+          email
+            ..contactId = rc.contactId
+            ..receptionId = rc.receptionId
+            ..enabled = true
+            ..confidential = false
+            ..priority = 0
+            ..description = email.addressType;
+
+          if(!containsEndpoint(endpoints, email)) {
+            endpoints.add(email);
+          }
+        }
+      }
+
+      return Future.forEach(endpoints, db.createEndpoint);
+    });
   });
+}
+
+String removeLeadingDots(String text) {
+  String tmp = text;
+  while(tmp.startsWith('.')) {
+    tmp = tmp.substring(1);
+  }
+  return tmp;
+}
+
+bool containsEndpoint(List<Endpoint> list, Endpoint endpoint) {
+  return list.any((e) => e.address == endpoint.address && e.addressType == endpoint.addressType);
+}
+
+Endpoint extractEndpoint(String text) {
+  if(text.contains('@cpsms.dk')) {
+    String number = text.split('.').first;
+    return new Endpoint()
+        ..address = number
+        ..addressType = 'sms';
+  } else {
+    return new Endpoint()
+        ..address = text
+        ..addressType = 'email';
+  }
 }

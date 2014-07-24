@@ -3,6 +3,7 @@ library adaheads.model;
 import 'dart:convert';
 
 part 'adaheads_model/contact.dart';
+part 'adaheads_model/endpoint.dart';
 part 'adaheads_model/organization.dart';
 part 'adaheads_model/phone.dart';
 part 'adaheads_model/reception.dart';

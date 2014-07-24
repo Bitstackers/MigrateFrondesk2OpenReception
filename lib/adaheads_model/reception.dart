@@ -12,6 +12,7 @@ class Reception {
   String customertype;
   String extradatauri;
   bool enabled;
+  String receptionNumber;
 
   List<String> addresses = [];
   List<String> alternatenames = [];
@@ -48,7 +49,7 @@ class Reception {
    */
   Reception();
 
-  Reception.fromDB(int this.id, int this.organization_id, String this.full_name, String this.uri, Map attributes, String this.extradatauri, bool this.enabled) {
+  Reception.fromDB(int this.id, int this.organization_id, String this.full_name, String this.uri, Map attributes, String this.extradatauri, bool this.enabled, String this.receptionNumber) {
 
   }
 
@@ -91,6 +92,7 @@ class Reception {
       'full_name': full_name,
       'uri': uri,
       'enabled': enabled,
+      'number': receptionNumber,
       'attributes': attributes
     };
 

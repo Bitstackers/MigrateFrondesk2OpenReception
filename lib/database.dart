@@ -10,6 +10,7 @@ import 'adaheads_model.dart' as adaheads_model;
 import 'configuration.dart';
 
 part 'database/contact.dart';
+part 'database/endpoint.dart';
 part 'database/organization.dart';
 part 'database/reception.dart';
 part 'database/reception_contact.dart';
@@ -49,19 +50,19 @@ class Database {
   Future<int> deleteReception(int organizationId, int id) =>
       _deleteReception(pool, organizationId, id);
 
-  Future<List<adaheads_model.Reception>> getContactReceptions(int contactId) =>
-      _getContactReceptions(pool, contactId);
+//  Future<List<adaheads_model.Reception>> getContactReceptions(int contactId) =>
+//      _getContactReceptions(pool, contactId);
 
-  Future<adaheads_model.Reception> getReception(int organizationId, int receptionId) =>
-      _getReception(pool, organizationId, receptionId);
+//  Future<adaheads_model.Reception> getReception(int organizationId, int receptionId) =>
+//      _getReception(pool, organizationId, receptionId);
 
-  Future<List<adaheads_model.Reception>> getReceptionList() => _getReceptionList(pool);
+//  Future<List<adaheads_model.Reception>> getReceptionList() => _getReceptionList(pool);
 
   Future<int> updateReception(int organizationId, int id, String fullName, Map attributes, String extradatauri, bool enabled, String number) =>
       _updateReception(pool, organizationId, id, fullName, attributes, extradatauri, enabled, number);
 
-  Future<List<adaheads_model.Reception>> getOrganizationReceptionList(int organizationId) =>
-      _getOrganizationReceptionList(pool, organizationId);
+//  Future<List<adaheads_model.Reception>> getOrganizationReceptionList(int organizationId) =>
+//      _getOrganizationReceptionList(pool, organizationId);
 
   /* ***********************************************
      ****************** Contact ********************
@@ -84,12 +85,40 @@ class Database {
   Future<int> updateContact(int contactId, String fullName, String contact_type, bool enabled) =>
       _updateContact(pool, contactId, fullName, contact_type, enabled);
 
+
+  /* ***********************************************
+     ***************** Endpoints *******************
+   */
+
+  Future<int> createEndpoint(adaheads_model.Endpoint endpoint) =>
+      _createEndpoint(pool, endpoint);
+
   /* ***********************************************
      ************ Reception Contacts ***************
    */
 
-  Future<int> createReceptionContact(int receptionId, int contactId, bool wantMessages, List phonenumbers, Map distributionList, Map attributes, bool enabled, bool data_contact, bool status_email) =>
-      _createReceptionContact(pool, receptionId, contactId, wantMessages, phonenumbers, distributionList, attributes, enabled, data_contact, status_email);
+  Future<int> createReceptionContact(
+      int receptionId,
+      int contactId,
+      bool wantMessages,
+      List phonenumbers,
+      Map distributionList,
+      Map attributes,
+      bool enabled,
+      bool data_contact,
+      bool status_email) =>
+
+      _createReceptionContact(
+          pool,
+          receptionId,
+          contactId,
+          wantMessages,
+          phonenumbers,
+          distributionList,
+          attributes,
+          enabled,
+          data_contact,
+          status_email);
 
   Future<int> deleteReceptionContact(int receptionId, int contactId) =>
       _deleteReceptionContact(pool, receptionId, contactId);
@@ -129,5 +158,3 @@ Future<List<Row>> query(Pool pool, String sql, [Map parameters = null]) =>  pool
 Future<int> execute(Pool pool, String sql, [Map parameters = null]) => pool.connect()
   .then((Connection conn) => conn.execute(sql, parameters)
   .whenComplete(() => conn.close()));
-
-
