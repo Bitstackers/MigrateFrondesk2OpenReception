@@ -98,8 +98,7 @@ Future createReception(Virksomhed virk, Database db, int
       ..websites = noEmptyStrings([virk.VirkWWW])
       ..openinghours = noEmptyStrings([virk.VirkKontortid])
       ..emailaddresses = noEmptyStrings([virk.VirkEmail])
-      ..receptionNumber = virk.VirkTH_nr
-      ;
+      ..receptionNumber = virk.VirkTH_nr;
 
   if (virk.VirkFax1 != null && virk.VirkFax1.trim().isNotEmpty) {
     recep.telephonenumbers.add('FAX ${virk.VirkFax1}');
@@ -151,7 +150,8 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
         ..info = med.MedNote
         ..handling = noEmptyStrings([med.MedTHMail])
         ..statusEmail = med.statusmail == '1'
-        ..branch = '${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}'.trim();
+        ..branch = '${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}'.trim()
+        ..contactEnabled = true;
 
     rc.distributionList = {
       'to': [{
@@ -208,7 +208,7 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
     Map attributes = rc.attributes;
     attributes['frontdesk'] = med;
     return db.createReceptionContact(rc.receptionId, rc.contactId,
-        rc.wantsMessages, rc.phoneNumbers, rc.distributionList, attributes, true, rc.dataContact,
+        rc.wantsMessages, rc.phoneNumbers, rc.distributionList, attributes, rc.contactEnabled, rc.dataContact,
         rc.statusEmail)
         .whenComplete(() {
       List<Endpoint> endpoints = new List<Endpoint>();
