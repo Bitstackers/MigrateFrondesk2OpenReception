@@ -68,21 +68,21 @@ Future<List<String>> _getContactTypeList(Pool pool) {
   return query(pool, sql).then((List Rows) => Rows.map((row) => row.value).toList());
 }
 
-Future<int> _updateContact(Pool pool, int contactId, String fullName, String contact_type, bool enabled) {
-  String sql = '''
-    UPDATE contacts
-    SET full_name=@full_name, contact_type=@contact_type, enabled=@enabled
-    WHERE id=@id;
-  ''';
-
-  Map parameters =
-    {'full_name'    : fullName,
-     'contact_type' : contact_type,
-     'enabled'      : enabled,
-     'id'           : contactId};
-
-  return execute(pool, sql, parameters);
-}
+//Future<int> _updateContact(Pool pool, int contactId, String fullName, String contact_type, bool enabled) {
+//  String sql = '''
+//    UPDATE contacts
+//    SET full_name=@full_name, contact_type=@contact_type, enabled=@enabled
+//    WHERE id=@id;
+//  ''';
+//
+//  Map parameters =
+//    {'full_name'    : fullName,
+//     'contact_type' : contact_type,
+//     'enabled'      : enabled,
+//     'id'           : contactId};
+//
+//  return execute(pool, sql, parameters);
+//}
 
 Future<List<adaheads_model.Contact>> _getOrganizationContactList(Pool pool, int organizationId) {
   String sql = '''

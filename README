@@ -9,6 +9,11 @@ mdb-tables ACS4000TH.mdb
 mdb-export -d ';' ACS4000TH.mdb T_Virksomhed > T_Virksomhed.csv
 mdb-export -d ';' ACS4000TH.mdb T_Medarbejder > T_Medarbejder.csv
 
+#To get the calendar information an firebird server must be running.
+#Check the run.sh for correct settings for the firebird connecting.
+#For extracting information out of that, there is made a couple of scripts which outputs the table where each column gets its own file, that is line seperated.
+#The data comes out in Western Europe 8852-1 encoding, so the command to convert every file in a folder is saved in the file "utf8Encode.sh". DON'T try to run the file, without first reading what it does!!
+#Last update the migrate program so it reads the right files.
 
 #Remarks
-CsvParser er blevet ændret i, fordi den smed en "unexpected empty line".
+The pub package CsvParser need a change to work, because it throws "unexpected empty line" for no apparent reason.

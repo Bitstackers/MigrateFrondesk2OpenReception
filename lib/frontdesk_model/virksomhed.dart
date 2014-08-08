@@ -1,6 +1,6 @@
 part of frontdesk.model;
 
-class Virksomhed {
+class Company {
   int VirkIDnr;
   String VirkNavn;
   int VirkPostnr;
@@ -80,4 +80,6 @@ class Virksomhed {
     'VirkPostby': VirkPostby,
     'VirkPostby2': VirkPostby2
   };
+
+  static int sortByVirkIDnr(Company a, Company b) => a.VirkIDnr.compareTo(b.VirkIDnr);
 }

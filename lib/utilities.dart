@@ -14,7 +14,7 @@ List<String> noEmptyStrings(Iterable<String> list) {
   return newlist;
 }
 
-Phone makePhone(int id, String number, String oplys, String beskrivelse, [String kind = 'PSTN']) {
+Phone createPhone(int id, String number, String oplys, String beskrivelse, [String kind = 'PSTN']) {
   if(number == null || number.trim().isEmpty ||
      oplys == null || oplys.trim().isEmpty) {
     return null;
@@ -37,7 +37,7 @@ Phone makePhone(int id, String number, String oplys, String beskrivelse, [String
 
   //And the bill type
   String billCode = components[0].substring(1,2);
-  obj.bill_type = billCode;
+  obj.billingType = billCode;
   return obj;
 }
 

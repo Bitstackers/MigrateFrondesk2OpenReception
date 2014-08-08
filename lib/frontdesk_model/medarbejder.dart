@@ -1,6 +1,6 @@
 part of frontdesk.model;
 
-class Medarbejder {
+class Employee {
   int MedID;
   String MedNavn;
   int VirkID;
@@ -70,4 +70,6 @@ class Medarbejder {
     'MedStdBesked': MedStdBesked,
     'MedPrimNummer': MedPrimNummer
   };
+
+  static int sortByMedID(Employee a, Employee b) => a.MedID.compareTo(b.MedID);
 }

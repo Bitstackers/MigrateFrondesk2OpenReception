@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import '../lib/configuration.dart';
 import '../lib/file2ir.dart';
@@ -9,6 +8,7 @@ import '../lib/database.dart';
 import '../lib/utilities.dart';
 
 int phoneNumberId = 1;
+List<CalendarEntry> calendarEntries;
 
 void main(List<String> args) {
   Configuration config = new Configuration(args);
@@ -18,13 +18,13 @@ void main(List<String> args) {
   } else if (config.isValid()) {
     print(config);
     AccessInstance acc = Convert(config);
+    calendarEntries = acc.calendar;
     //acc.virksomheder.forEach((v) => print(v.VirkIDnr));
 
     setupDatabase(config).then((Database db) {
-      return Future.wait(acc.virksomheder.map((virk) => createOrganization(db,
-          virk, acc.medarbejder.where((m) => m.VirkID == virk.VirkIDnr).toList()))
-          ).whenComplete(() => db.close()).then((_) {
-        print('Completed. Added ${acc.virksomheder.length} companies and ${acc.medarbejder.length} employees');
+      return Future.wait(acc.companies.map((virk) => createOrganization(db, virk, acc.employees.where((m) => m.VirkID == virk.VirkIDnr).toList())) )
+          .whenComplete(() => db.close()).then((_) {
+        print('Completed. Added ${acc.companies.length} companies and ${acc.employees.length} employees');
       });
 
       //manualCheck(db, acc);
@@ -34,7 +34,7 @@ void main(List<String> args) {
 
 void manualCheck(Database db, AccessInstance acc) {
   db.close();
-  for (Medarbejder med in acc.medarbejder) {
+  for (Employee med in acc.employees) {
     if (med.MedNavn.contains('Sælger')) {
       //print('${removeLeadingDots(med.MedNavn)} "${med.MedTHMail}" Virksomed: ${med.VirkID}');
     }
@@ -46,13 +46,13 @@ void manualCheck(Database db, AccessInstance acc) {
     }
   }
 
-  for (var virk in acc.virksomheder) {
+  for (var virk in acc.companies) {
     if (virk.VirkIDnr == 33170197) {
       print(virk.VirkNavn);
     }
   }
 
-  for (Medarbejder med in acc.medarbejder) {
+  for (Employee med in acc.employees) {
     if (numberIsBroken(med.MedDirTlf)) {
       print('Navn: ${med.MedNavn}. DirTlf: ${med.MedDirTlf}');
     }
@@ -70,15 +70,15 @@ void manualCheck(Database db, AccessInstance acc) {
   print('complete');
 }
 
-Future createOrganization(Database db, Virksomhed virk, List<Medarbejder>
+Future createOrganization(Database db, Company virk, List<Employee>
     medarbejdere) {
   return db.createOrganization(virk.VirkNavn, '', '').then((int orgId) {
     return createReception(virk, db, orgId, medarbejdere);
   });
 }
 
-Future createReception(Virksomhed virk, Database db, int
-    orgId, List<Medarbejder> medarbejdere) {
+Future createReception(Company virk, Database db, int
+    orgId, List<Employee> medarbejdere) {
 
   Reception recep = new Reception()
       ..full_name = virk.VirkNavn
@@ -108,7 +108,7 @@ Future createReception(Virksomhed virk, Database db, int
     recep.telephonenumbers.add('FAX ${virk.VirkFax2}');
   }
 
-  Medarbejder openingshours = medarbejdere.firstWhere((e) => e.MedNavn.contains(
+  Employee openingshours = medarbejdere.firstWhere((e) => e.MedNavn.contains(
       'Åbningstider'), orElse: () => null);
   if (openingshours != null && openingshours.MedStilling != null &&
       openingshours.MedStilling.trim().isNotEmpty) {
@@ -116,11 +116,11 @@ Future createReception(Virksomhed virk, Database db, int
     medarbejdere.remove(openingshours);
   }
 
-  Medarbejder salesCall = medarbejdere.firstWhere((e) => e.MedNavn.contains(
+  Employee salesCall = medarbejdere.firstWhere((e) => e.MedNavn.contains(
       'Sælgere / Analyser'), orElse: () => null);
   if (salesCall != null && salesCall.MedTHMail != null &&
       salesCall.MedTHMail.trim().isNotEmpty) {
-    recep.crapcallhandling.add(salesCall.MedTHMail);
+    recep.salesCalls.add(salesCall.MedTHMail);
     medarbejdere.remove(salesCall);
   }
 
@@ -132,7 +132,7 @@ Future createReception(Virksomhed virk, Database db, int
   });
 }
 
-Future createContact(Database db, int receptionId, Medarbejder med) {
+Future createContact(Database db, int receptionId, Employee med) {
   String contactType = med.MedNavn.startsWith('.') ? 'function' : 'human';
   String contactName = removeLeadingDots(med.MedNavn); //med.MedNavn;
 
@@ -144,8 +144,8 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
             med.MedIngenSMS == '0'
         ..position = med.MedStilling
         ..department = med.MedAfd
+        //TODO is this still used?
         ..emailaddresses = noEmptyStrings([med.MedEmail, med.MedPrivatEmail])
-        //TODO Message table
         ..responsibility = med.MedAnsvarsomraade
         ..info = med.MedNote
         ..handling = noEmptyStrings([med.MedTHMail])
@@ -162,10 +162,12 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
       'bcc': []
     };
 
-    List<Phone> phoneNumbers = [makePhone(phoneNumberId++, med.MedDirTlf,
-        med.MedDirTlfOpl, 'Direkte'), makePhone(phoneNumberId++, med.MedMobil,
-        med.MedMobilOpl, 'Mobil'), makePhone(phoneNumberId++, med.MedHasterTlf,
-        med.MedHasterTlfOpl, 'Haster'), makePhone(phoneNumberId++, med.MedPrivTlf,
+    //These code blocks here, rely on the fact that "makePhone" returns a null,
+    // if there are no data, to make a number out of.
+    List<Phone> phoneNumbers = [createPhone(phoneNumberId++, med.MedDirTlf,
+        med.MedDirTlfOpl, 'Direkte'), createPhone(phoneNumberId++, med.MedMobil,
+        med.MedMobilOpl, 'Mobil'), createPhone(phoneNumberId++, med.MedHasterTlf,
+        med.MedHasterTlfOpl, 'Haster'), createPhone(phoneNumberId++, med.MedPrivTlf,
         med.MedPrivTlfOpl, 'Privat')];
 
     if (med.MedPrimNummer == '2') {
@@ -180,6 +182,7 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
     }
 
     rc.phoneNumbers = phoneNumbers.where((e) => e != null).toList();
+
     /*
   String MedAdr;
   String MedPostnr;
@@ -210,68 +213,76 @@ Future createContact(Database db, int receptionId, Medarbejder med) {
     return db.createReceptionContact(rc.receptionId, rc.contactId,
         rc.wantsMessages, rc.phoneNumbers, rc.distributionList, attributes, rc.contactEnabled, rc.dataContact,
         rc.statusEmail)
+        .whenComplete(() => handleEndpoints(med, rc, db))
         .whenComplete(() {
-      List<Endpoint> endpoints = new List<Endpoint>();
+          List<CalendarEntry> entries = calendarEntries.where((c) => c.userId == med.MedID).toList();
 
-      if(med.MedEmail != null && med.MedEmail.trim().isNotEmpty) {
-        Iterable<String> rawEmails = med.MedEmail.split(';').map((e) => e.trim());
-
-        for(String rawEmail in rawEmails) {
-          Endpoint email = extractEndpoint(rawEmail)
-              ..contactId = rc.contactId
-              ..receptionId = rc.receptionId
-              ..enabled = true
-              ..confidential = false
-              ..priority = 0
-              ..description = 'Firma E-mail';
-
-          if(!containsEndpoint(endpoints, email)) {
-            endpoints.add(email);
-          }
-        }
-      }
-
-      if(med.MedPrivatEmail != null && med.MedPrivatEmail.trim().isNotEmpty) {
-        Iterable<String> rawEmails = med.MedPrivatEmail.split(';').map((e) => e.trim());
-
-        for(String rawEmail in rawEmails) {
-          Endpoint email = extractEndpoint(rawEmail)
-            ..contactId = rc.contactId
-            ..receptionId = rc.receptionId
-            ..enabled = true
-            ..confidential = false
-            ..priority = 0
-            ..description = 'Private E-mail';
-
-          if(!containsEndpoint(endpoints, email)) {
-            endpoints.add(email);
-          }
-        }
-      }
-
-      if(med.MedSMS != null && med.MedSMS.trim().isNotEmpty) {
-        Iterable<String> rawEmails = med.MedSMS.split(';').map((e) => e.trim());
-
-        for(String rawEmail in rawEmails) {
-          Endpoint email = extractEndpoint(rawEmail);
-
-          email
-            ..contactId = rc.contactId
-            ..receptionId = rc.receptionId
-            ..enabled = true
-            ..confidential = false
-            ..priority = 0
-            ..description = email.addressType;
-
-          if(!containsEndpoint(endpoints, email)) {
-            endpoints.add(email);
-          }
-        }
-      }
-
-      return Future.forEach(endpoints, db.createEndpoint);
+          return Future.forEach(entries, (CalendarEntry entry) => db.createEvent(entry.start, entry.end, entry.message)
+              .then((int eventId) => db.createContactEvent(rc.receptionId, rc.contactId, eventId) ) );
     });
   });
+}
+
+Future handleEndpoints(Employee med, ReceptionContact rc, Database db) {
+  List<Endpoint> endpoints = new List<Endpoint>();
+
+  if(med.MedEmail != null && med.MedEmail.trim().isNotEmpty) {
+    Iterable<String> rawEmails = med.MedEmail.split(';').map((e) => e.trim());
+
+    for(String rawEmail in rawEmails) {
+      Endpoint email = extractEndpoint(rawEmail)
+          ..contactId = rc.contactId
+          ..receptionId = rc.receptionId
+          ..enabled = true
+          ..confidential = false
+          ..priority = 0
+          ..description = 'Firma E-mail';
+
+      if(!containsEndpoint(endpoints, email)) {
+        endpoints.add(email);
+      }
+    }
+  }
+
+  if(med.MedPrivatEmail != null && med.MedPrivatEmail.trim().isNotEmpty) {
+    Iterable<String> rawEmails = med.MedPrivatEmail.split(';').map((e) => e.trim());
+
+    for(String rawEmail in rawEmails) {
+      Endpoint email = extractEndpoint(rawEmail)
+        ..contactId = rc.contactId
+        ..receptionId = rc.receptionId
+        ..enabled = true
+        ..confidential = false
+        ..priority = 0
+        ..description = 'Private E-mail';
+
+      if(!containsEndpoint(endpoints, email)) {
+        endpoints.add(email);
+      }
+    }
+  }
+
+  if(med.MedSMS != null && med.MedSMS.trim().isNotEmpty) {
+    Iterable<String> rawEmails = med.MedSMS.split(';').map((e) => e.trim());
+
+    for(String rawEmail in rawEmails) {
+      Endpoint email = extractEndpoint(rawEmail);
+
+      email
+        ..contactId = rc.contactId
+        ..receptionId = rc.receptionId
+        ..enabled = true
+        ..confidential = false
+        ..priority = 0
+        ..description = email.addressType;
+
+      if(!containsEndpoint(endpoints, email)) {
+        endpoints.add(email);
+      }
+    }
+  }
+
+  return Future.forEach(endpoints, db.createEndpoint);
 }
 
 String removeLeadingDots(String text) {

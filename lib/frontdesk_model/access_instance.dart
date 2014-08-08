@@ -1,6 +1,7 @@
 part of frontdesk.model;
 
 class AccessInstance {
-  List<Medarbejder> medarbejder = new List<Medarbejder>();
-  List<Virksomhed> virksomheder = new List<Virksomhed>();
+  List<Employee> employees = new List<Employee>();
+  List<Company> companies = new List<Company>();
+  List<CalendarEntry> calendar = new List<CalendarEntry>();
 }

@@ -9,6 +9,7 @@ import 'package:postgresql/postgresql.dart';
 import 'adaheads_model.dart' as adaheads_model;
 import 'configuration.dart';
 
+part 'database/calendar.dart';
 part 'database/contact.dart';
 part 'database/endpoint.dart';
 part 'database/organization.dart';
@@ -82,8 +83,8 @@ class Database {
   Future<List<adaheads_model.Contact>> getOrganizationContactList(int organizationId) =>
       _getOrganizationContactList(pool, organizationId);
 
-  Future<int> updateContact(int contactId, String fullName, String contact_type, bool enabled) =>
-      _updateContact(pool, contactId, fullName, contact_type, enabled);
+//  Future<int> updateContact(int contactId, String fullName, String contact_type, bool enabled) =>
+//      _updateContact(pool, contactId, fullName, contact_type, enabled);
 
 
   /* ***********************************************
@@ -130,8 +131,8 @@ class Database {
      *************** Organization ******************
    */
 
-  Future<int> createOrganization(String fullName, String bill_type, String flag) =>
-      _createOrganization(pool, fullName, bill_type, flag);
+  Future<int> createOrganization(String fullName, String billingType, String flag) =>
+      _createOrganization(pool, fullName, billingType, flag);
 
   Future<int> deleteOrganization(int organizationId) =>
       _deleteOrganization(pool, organizationId);
@@ -142,9 +143,18 @@ class Database {
   Future<List<adaheads_model.Organization>> getOrganizationList() =>
       _getOrganizationList(pool);
 
-  Future<int> updateOrganization(int organizationId, String fullName, String billType, String flag) =>
-      _updateOrganization(pool, organizationId, fullName, billType, flag);
+  Future<int> updateOrganization(int organizationId, String fullName, String billingType, String flag) =>
+      _updateOrganization(pool, organizationId, fullName, billingType, flag);
 
+  /* ***********************************************
+     ****************** Calendar *******************
+   */
+
+  Future<int> createEvent(DateTime start, DateTime stop, String message) =>
+      _createCalendarEvent(pool, start, stop, message);
+
+  Future createContactEvent(int receptionId, int contactId, int eventId) =>
+      _createContactEvent(pool, receptionId, contactId, eventId);
 }
 
 /* ***********************************************

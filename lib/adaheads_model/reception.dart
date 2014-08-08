@@ -17,7 +17,7 @@ class Reception {
   List<String> addresses = [];
   List<String> alternatenames = [];
   List<String> bankinginformation = [];
-  List<String> crapcallhandling = [];
+  List<String> salesCalls = [];
   List<String> emailaddresses = [];
   List<String> handlings = [];
   List<String> openinghours = [];
@@ -35,7 +35,7 @@ class Reception {
       'addresses': priorityListToJson(addresses),
       'alternatenames': priorityListToJson(alternatenames),
       'bankinginformation': priorityListToJson(bankinginformation),
-      'crapcallhandling': priorityListToJson(crapcallhandling),
+      'salescalls': priorityListToJson(salesCalls),
       'emailaddresses': priorityListToJson(emailaddresses),
       'handlings': priorityListToJson(handlings),
       'openinghours': priorityListToJson(openinghours),
@@ -73,7 +73,7 @@ class Reception {
         ..addresses = priorityListFromJson(attributes, 'addresses')
         ..alternatenames = priorityListFromJson(attributes, 'alternatenames')
         ..bankinginformation = priorityListFromJson(attributes, 'bankinginformation')
-        ..crapcallhandling = priorityListFromJson(attributes, 'crapcallhandling')
+        ..salesCalls = priorityListFromJson(attributes, 'salescalls')
         ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
         ..handlings = priorityListFromJson(attributes, 'handlings')
         ..openinghours = priorityListFromJson(attributes, 'openinghours')
