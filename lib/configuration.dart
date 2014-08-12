@@ -15,6 +15,11 @@ class Configuration {
   int get dbport => int.parse(parsedArgs['dbport']);
   String get dbname => parsedArgs['dbname'];
 
+  String get calendarStartFile => parsedArgs['calendarstartfile'];
+  String get calendarEndFile => parsedArgs['calendarendfile'];
+  String get calendarMessageFile => parsedArgs['calendarmessagefile'];
+  String get calendarUsernameFile => parsedArgs['calendarusernamefile'];
+
   String _seperator = ';';
   String get seperator => _seperator;
 
@@ -36,6 +41,11 @@ class Configuration {
     parser.addOption('dbhost',          help: 'The database host. Defaults to localhost');
     parser.addOption('dbport',          help: 'The database port. Defaults to 5432');
     parser.addOption('dbname',          help: 'The database name');
+
+    parser.addOption('calendarstartfile',    help: 'The calendar file for start timestamp');
+    parser.addOption('calendarendfile',      help: 'The calendar file for end timestamp');
+    parser.addOption('calendarmessagefile',  help: 'The calendar file for messages');
+    parser.addOption('calendarusernamefile', help: 'The calendar file for user ids');
 
     return parser.parse(arguments);
   }
@@ -92,6 +102,51 @@ class Configuration {
       return false;
     }
 
+    //Calendar Files
+    if(!_hasArgument('calendarstartfile', parsedArgs)) {
+      print('Missing argument calendarstartfile');
+      return false;
+    } else {
+      File file = new File(parsedArgs['calendarstartfile']);
+      if(!file.existsSync()) {
+        print('Missing file ${parsedArgs['calendarstartfile']}');
+        return false;
+      }
+    }
+
+    if(!_hasArgument('calendarendfile', parsedArgs)) {
+      print('Missing argument calendarendfile');
+      return false;
+    } else {
+      File file = new File(parsedArgs['calendarendfile']);
+      if(!file.existsSync()) {
+        print('Missing file ${parsedArgs['calendarendfile']}');
+        return false;
+      }
+    }
+
+    if(!_hasArgument('calendarmessagefile', parsedArgs)) {
+      print('Missing argument calendarmessagefile');
+      return false;
+    } else {
+      File file = new File(parsedArgs['calendarmessagefile']);
+      if(!file.existsSync()) {
+        print('Missing file ${parsedArgs['calendarmessagefile']}');
+        return false;
+      }
+    }
+
+    if(!_hasArgument('calendarusernamefile', parsedArgs)) {
+      print('Missing argument calendarusernamefile');
+      return false;
+    } else {
+      File file = new File(parsedArgs['calendarusernamefile']);
+      if(!file.existsSync()) {
+        print('Missing file ${parsedArgs['calendarusernamefile']}');
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -106,6 +161,12 @@ class Configuration {
       Port: $dbport
       User: $dbuser
       Pass: ${dbpassword.codeUnits.map((_) => '*').join()}
-      Name: $dbname 
+      Name: $dbname
+    
+    Calendar:
+      Start  : $calendarStartFile
+      End    : $calendarEndFile
+      Message: $calendarMessageFile
+      user   : $calendarUsernameFile
   ''';
 }
