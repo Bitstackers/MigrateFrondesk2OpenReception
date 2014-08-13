@@ -31,10 +31,9 @@ AccessInstance Convert(Configuration config) {
   }
   instance.employees.sort(Employee.sortByMedID);
 
-  //TODO FIXME Should be a configuration.
-  String startFile = config.calendarStartFile;
-  String endFile = config.calendarEndFile;
-  String messageFile = config.calendarMessageFile;
+  String startFile    = config.calendarStartFile;
+  String endFile      = config.calendarEndFile;
+  String messageFile  = config.calendarMessageFile;
   String usernameFile = config.calendarUsernameFile;
 
   instance.calendar = readCalendarFiles(startFile, endFile, messageFile, usernameFile);
