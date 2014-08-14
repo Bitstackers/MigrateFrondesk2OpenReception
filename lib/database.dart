@@ -103,7 +103,6 @@ class Database {
       int contactId,
       bool wantMessages,
       List phonenumbers,
-      Map distributionList,
       Map attributes,
       bool enabled,
       bool data_contact,
@@ -115,7 +114,6 @@ class Database {
           contactId,
           wantMessages,
           phonenumbers,
-          distributionList,
           attributes,
           enabled,
           data_contact,
@@ -155,6 +153,12 @@ class Database {
 
   Future createContactEvent(int receptionId, int contactId, int eventId) =>
       _createContactEvent(pool, receptionId, contactId, eventId);
+
+  /* ***********************************************
+     ************** DistributionList ***************
+   */
+  Future createDistributionListEntry(int ownerReceptionId, int ownerContactId, String role, int recipientReceptionId, int recipientContactId) =>
+      _createDistributionListEntry(pool, ownerReceptionId, ownerContactId, role, recipientReceptionId, recipientContactId);
 }
 
 /* ***********************************************

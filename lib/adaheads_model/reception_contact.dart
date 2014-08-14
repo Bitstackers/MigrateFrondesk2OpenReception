@@ -5,7 +5,6 @@ class ReceptionContact {
   bool contactEnabled;
   int receptionId;
   bool wantsMessages;
-  Map distributionList;
   List<Phone> phoneNumbers;
 
   bool dataContact = false;
@@ -108,8 +107,6 @@ class ReceptionContact {
   }
 
   ReceptionContact() {
-    distributionList = new Map();
-
     attributes = {
       'department': '',
       'info': '',
@@ -124,25 +121,6 @@ class ReceptionContact {
       'tags': [],
       'branch': ''
     };
-  }
-
-  factory ReceptionContact.fromJson(Map json) {
-    ReceptionContact object = new ReceptionContact()
-      ..contactId = json['contact_id']
-      ..contactEnabled = json['contact_enabled']
-      ..receptionId = json['reception_id']
-      ..wantsMessages = json['wants_messages']
-      ..distributionList = json['distributionList']
-      ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map json) => new Phone.fromJson(json)).toList();
-
-    if (json.containsKey('attributes')) {
-      Map attr = json['attributes'];
-      for(String key in attr) {
-        object._attributes[key] = attr[key];
-      }
-    }
-
-    return object;
   }
 
   String toJson() {

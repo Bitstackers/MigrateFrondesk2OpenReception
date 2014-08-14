@@ -1,9 +1,9 @@
 part of adaheads.server.database;
 
-Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, List phonenumbers, Map distributionList, Map attributes, bool enabled, bool data_contact, bool status_email) {
+Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, bool wantMessages, List phonenumbers, Map attributes, bool enabled, bool data_contact, bool status_email) {
   String sql = '''
-    INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, phonenumbers, distribution_list, attributes, enabled, data_contact, status_email)
-    VALUES (@reception_id, @contact_id, @wants_messages, @phonenumbers, @distributionList, @attributes, @enabled, @data_contact, @status_email);
+    INSERT INTO reception_contacts (reception_id, contact_id, wants_messages, phonenumbers, attributes, enabled, data_contact, status_email)
+    VALUES (@reception_id, @contact_id, @wants_messages, @phonenumbers, @attributes, @enabled, @data_contact, @status_email);
   ''';
 
   Map parameters =
@@ -11,7 +11,6 @@ Future<int> _createReceptionContact(Pool pool, int receptionId, int contactId, b
      'contact_id'           : contactId,
      'wants_messages'       : wantMessages,
      'phonenumbers'         : phonenumbers == null ? '[]' : JSON.encode(phonenumbers),
-     'distributionList'     : distributionList == null ? '{}' : JSON.encode(distributionList),
      'attributes'           : attributes == null ? '{}' : JSON.encode(attributes),
      'enabled'              : enabled,
      'data_contact': data_contact,
@@ -70,4 +69,21 @@ Future<List<adaheads_model.Organization>> _getAContactsOrganizationList(Pool poo
     }
     return organizations;
   });
+}
+
+Future<int> _createDistributionListEntry(Pool pool, int ownerReceptionId, int ownerContactId, String role, int recipientReceptionId, int recipientContactId) {
+  String sql = '''
+    INSERT INTO distribution_list (owner_reception_id, owner_contact_id, role, recipient_reception_id, recipient_contact_id)
+    VALUES (@owner_reception, @owner_contact, @role, @recipient_reception, @recipient_contact)
+    RETURNING id;
+  ''';
+
+  Map parameters =
+    {'owner_reception'     : ownerReceptionId,
+     'owner_contact'       : ownerContactId,
+     'role'                : role,
+     'recipient_reception' : recipientReceptionId,
+     'recipient_contact'   : recipientContactId};
+
+  return query(pool, sql, parameters).then((rows) => rows.first.id);
 }
