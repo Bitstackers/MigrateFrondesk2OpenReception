@@ -32,16 +32,16 @@ class Reception {
       'greeting': greeting != null ? greeting : '',
       'shortgreeting': shortgreeting != null ? shortgreeting : (greeting != null ? greeting : ''),
       'customertype': customertype != null ? customertype : '',
-      'addresses': priorityListToJson(addresses),
-      'alternatenames': priorityListToJson(alternatenames),
-      'bankinginformation': priorityListToJson(bankinginformation),
-      'salescalls': priorityListToJson(salesCalls),
-      'emailaddresses': priorityListToJson(emailaddresses),
-      'handlings': priorityListToJson(handlings),
-      'openinghours': priorityListToJson(openinghours),
-      'registrationnumbers': priorityListToJson(registrationnumbers),
-      'telephonenumbers': priorityListToJson(telephonenumbers),
-      'websites': priorityListToJson(websites)
+      'addresses': addresses,
+      'alternatenames': alternatenames,
+      'bankinginformation': bankinginformation,
+      'salescalls': salesCalls,
+      'emailaddresses': emailaddresses,
+      'handlings': handlings,
+      'openinghours': openinghours,
+      'registrationnumbers': registrationnumbers,
+      'telephonenumbers': telephonenumbers,
+      'websites': websites
     };
 
   /**
@@ -70,16 +70,16 @@ class Reception {
         ..greeting = stringFromJson(attributes, 'greeting')
         ..customertype = stringFromJson(attributes, 'customertype')
 
-        ..addresses = priorityListFromJson(attributes, 'addresses')
-        ..alternatenames = priorityListFromJson(attributes, 'alternatenames')
-        ..bankinginformation = priorityListFromJson(attributes, 'bankinginformation')
-        ..salesCalls = priorityListFromJson(attributes, 'salescalls')
-        ..emailaddresses = priorityListFromJson(attributes, 'emailaddresses')
-        ..handlings = priorityListFromJson(attributes, 'handlings')
-        ..openinghours = priorityListFromJson(attributes, 'openinghours')
-        ..registrationnumbers = priorityListFromJson(attributes, 'registrationnumbers')
-        ..telephonenumbers = priorityListFromJson(attributes, 'telephonenumbers')
-        ..websites = priorityListFromJson(attributes, 'websites');
+        ..addresses = attributes['addresses']
+        ..alternatenames = attributes['alternatenames']
+        ..bankinginformation = attributes['bankinginformation']
+        ..salesCalls = attributes['salescalls']
+        ..emailaddresses = attributes['emailaddresses']
+        ..handlings = attributes['handlings']
+        ..openinghours = attributes['openinghours']
+        ..registrationnumbers = attributes['registrationnumbers']
+        ..telephonenumbers = attributes['telephonenumbers']
+        ..websites = attributes['websites'];
     }
 
     return reception;
