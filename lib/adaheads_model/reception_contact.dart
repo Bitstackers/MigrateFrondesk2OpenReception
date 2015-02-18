@@ -5,7 +5,6 @@ class ReceptionContact {
   bool contactEnabled;
   int receptionId;
   bool wantsMessages;
-  Map distributionList;
   List<Phone> phoneNumbers;
 
   bool dataContact = false;
@@ -19,36 +18,36 @@ class ReceptionContact {
     _attributes = value;
   }
 
-  List<String> get backup => priorityListFromJson(_attributes, 'backup');
+  List<String> get backup => _attributes['backup'];
   void set backup(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['backup'] = priorityListToJson(list);
+    _attributes['backup'] = list;
   }
 
-  List<String> get emailaddresses => priorityListFromJson(_attributes, 'emailaddresses');
+  List<String> get emailaddresses => _attributes['emailaddresses'];
   void set emailaddresses(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['emailaddresses'] = priorityListToJson(list);
+    _attributes['emailaddresses'] = list;
   }
 
-  List<String> get handling => priorityListFromJson(_attributes, 'handling');
+  List<String> get handling => _attributes['handling'];
   void set handling(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['handling'] = priorityListToJson(list);
+    _attributes['handling'] = list;
   }
 
-  List<String> get workhours => priorityListFromJson(_attributes, 'workhours');
+  List<String> get workhours => _attributes['workhours'];
   void set workhours(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['workhours'] = priorityListToJson(list);
+    _attributes['workhours'] = list;
   }
 
   List<String> get tags => _attributes['tags'];
@@ -108,8 +107,6 @@ class ReceptionContact {
   }
 
   ReceptionContact() {
-    distributionList = new Map();
-
     attributes = {
       'department': '',
       'info': '',
@@ -124,25 +121,6 @@ class ReceptionContact {
       'tags': [],
       'branch': ''
     };
-  }
-
-  factory ReceptionContact.fromJson(Map json) {
-    ReceptionContact object = new ReceptionContact()
-      ..contactId = json['contact_id']
-      ..contactEnabled = json['contact_enabled']
-      ..receptionId = json['reception_id']
-      ..wantsMessages = json['wants_messages']
-      ..distributionList = json['distributionList']
-      ..phoneNumbers = (json['contact_phonenumbers'] as List<Map>).map((Map json) => new Phone.fromJson(json)).toList();
-
-    if (json.containsKey('attributes')) {
-      Map attr = json['attributes'];
-      for(String key in attr) {
-        object._attributes[key] = attr[key];
-      }
-    }
-
-    return object;
   }
 
   String toJson() {

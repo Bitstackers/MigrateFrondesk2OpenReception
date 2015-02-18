@@ -7,17 +7,17 @@ class Configuration {
   ArgResults    parsedArgs;
   ArgParser     parser = new ArgParser();
 
-  String get company => parsedArgs['company'];
-  String get employee => parsedArgs['employee'];
-  String get dbuser => parsedArgs['dbuser'];
+  String get company    => parsedArgs['company'];
+  String get employee   => parsedArgs['employee'];
+  String get dbuser     => parsedArgs['dbuser'];
   String get dbpassword => parsedArgs['dbpassword'];
-  String get dbhost => parsedArgs['dbhost'];
-  int get dbport => int.parse(parsedArgs['dbport']);
-  String get dbname => parsedArgs['dbname'];
+  String get dbhost     => parsedArgs['dbhost'];
+  int    get dbport     => int.parse(parsedArgs['dbport']);
+  String get dbname     => parsedArgs['dbname'];
 
-  String get calendarStartFile => parsedArgs['calendarstartfile'];
-  String get calendarEndFile => parsedArgs['calendarendfile'];
-  String get calendarMessageFile => parsedArgs['calendarmessagefile'];
+  String get calendarStartFile    => parsedArgs['calendarstartfile'];
+  String get calendarEndFile      => parsedArgs['calendarendfile'];
+  String get calendarMessageFile  => parsedArgs['calendarmessagefile'];
   String get calendarUsernameFile => parsedArgs['calendarusernamefile'];
 
   String _seperator = ';';

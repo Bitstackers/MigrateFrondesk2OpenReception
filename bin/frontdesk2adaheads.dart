@@ -153,15 +153,6 @@ Future createContact(Database db, int receptionId, Employee med) {
         ..branch = '${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}'.trim()
         ..contactEnabled = true;
 
-    rc.distributionList = {
-      'to': [{
-        'reception_id': rc.receptionId,
-        'contact_id': rc.contactId
-      }],
-      'cc':[],
-      'bcc': []
-    };
-
     //These code blocks here, rely on the fact that "makePhone" returns a null,
     // if there are no data, to make a number out of.
     List<Phone> phoneNumbers = [createPhone(phoneNumberId++, med.MedDirTlf,
@@ -211,8 +202,9 @@ Future createContact(Database db, int receptionId, Employee med) {
     Map attributes = rc.attributes;
     attributes['frontdesk'] = med;
     return db.createReceptionContact(rc.receptionId, rc.contactId,
-        rc.wantsMessages, rc.phoneNumbers, rc.distributionList, attributes, rc.contactEnabled, rc.dataContact,
+        rc.wantsMessages, rc.phoneNumbers, attributes, rc.contactEnabled, rc.dataContact,
         rc.statusEmail)
+        .then((_) => db.createDistributionListEntry(rc.receptionId, rc.contactId, 'to', rc.receptionId, rc.contactId))
         .whenComplete(() => handleEndpoints(med, rc, db))
         .whenComplete(() {
           List<CalendarEntry> entries = calendarEntries.where((c) => c.userId == med.MedID).toList();

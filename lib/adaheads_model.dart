@@ -18,41 +18,41 @@ String stringFromJson(Map json, String key) {
   }
 }
 
-List<String> priorityListFromJson(Map json, String key) {
-  try {
-    if(json.containsKey(key) && json[key] is List) {
-      List<Map> rawList = json[key];
-      List<String> list = new List<String>();
-
-      rawList.sort((a, b) => a['priority'] - b['priority']);
-      //Sorted by priority.
-      for(Map item in json[key]) {
-        list.add(item['value']);
-      }
-      return list;
-    } else {
-      return null;
-    }
-  } catch(e) {
-    //log Error.
-    print('"$e key: "$key" json: "$json"');
-    return null;
-  }
-}
-
-List priorityListToJson(List<String> list) {
-  if(list == null) return [];
-
-  List<Map> result = new List<Map>();
-
-  int priority = 1;
-  for(String item in list) {
-    result.add({
-      'priority': priority,
-      'value': item
-    });
-    priority += 1;
-  }
-
-  return result;
-}
+//List<String> priorityListFromJson(Map json, String key) {
+//  try {
+//    if(json.containsKey(key) && json[key] is List) {
+//      List<Map> rawList = json[key];
+//      List<String> list = new List<String>();
+//
+//      rawList.sort((a, b) => a['priority'] - b['priority']);
+//      //Sorted by priority.
+//      for(Map item in json[key]) {
+//        list.add(item['value']);
+//      }
+//      return list;
+//    } else {
+//      return null;
+//    }
+//  } catch(e) {
+//    //log Error.
+//    print('"$e key: "$key" json: "$json"');
+//    return null;
+//  }
+//}
+//
+//List priorityListToJson(List<String> list) {
+//  if(list == null) return [];
+//
+//  List<Map> result = new List<Map>();
+//
+//  int priority = 1;
+//  for(String item in list) {
+//    result.add({
+//      'priority': priority,
+//      'value': item
+//    });
+//    priority += 1;
+//  }
+//
+//  return result;
+//}
