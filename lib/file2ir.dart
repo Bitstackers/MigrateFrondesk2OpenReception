@@ -2,7 +2,8 @@ library File2Ir;
 
 import 'dart:io';
 
-import 'package:csvparser/csvparser.dart';
+import 'package:csv/csv.dart';
+
 
 import 'configuration.dart';
 import 'frontdesk_model.dart';
@@ -11,24 +12,59 @@ import 'frontdesk_firebird.dart';
 AccessInstance Convert(Configuration config) {
   AccessInstance instance = new AccessInstance();
 
-  File VirkFile = new File(config.company);
-  String VirkData = VirkFile.readAsStringSync();
-  CsvParser cp = new CsvParser(VirkData, seperator:config.seperator, quotemark:'"', lineend: '\n', setHeaders: true);
-  while(cp.moveNext()) {
-    Map<String, String> tokens = cp.current.toMap(cp.headers);
-    Company virk = mapVirksomhed(tokens);
-    instance.companies.add(virk);
-  }
+  File csvFile = new File(config.company);
+  String buffer = csvFile.readAsStringSync();
+  
+  final decoder = new CsvToListConverter
+       (fieldDelimiter: ';', parseNumbers: false, eol: '\n');
+
+  List<String> headers;
+  
+  List<List<String>> decodedCsv = decoder.convert(buffer);
+
+    /// Cherry-pick the headers.
+    headers = decodedCsv.removeAt(0);
+    print ('Headers: $headers');
+
+    decodedCsv.forEach((List<String> rowElements) {
+      int column = 0;
+      Map value  = {};
+      rowElements.forEach((var element) {
+        value[headers[column]] = element;
+        column++;
+      });
+
+      Company virk = mapVirksomhed(value);
+      print (virk.VirkIDnr);
+      instance.companies.add(virk);
+  });
+  
   instance.companies.sort(Company.sortByVirkIDnr);
 
-  File MedFile = new File(config.employee);
-  String MedData = MedFile.readAsStringSync();
-  cp = new CsvParser(MedData, seperator:config.seperator, quotemark:'"', lineend: '\n', setHeaders: true);
-  while(cp.moveNext()) {
-    Map<String, String> tokens = cp.current.toMap(cp.headers);
-    Employee med = mapMedarbejder(tokens);
-    instance.employees.add(med);
-  }
+
+  // Clear headers.
+  headers = [];
+  csvFile = new File(config.employee);
+  buffer = csvFile.readAsStringSync(); 
+  
+    decodedCsv = decoder.convert(buffer);
+
+    /// Cherry-pick the headers.
+    headers = decodedCsv.removeAt(0);
+    print ('Headers: $headers');
+
+    decodedCsv.forEach((List<String> rowElements) {
+      int column = 0;
+      Map value  = {};
+      rowElements.forEach((var element) {
+        value[headers[column]] = element;
+        column++;
+      });
+
+      Employee med = mapMedarbejder(value);
+      instance.employees.add(med);
+    });
+
   instance.employees.sort(Employee.sortByMedID);
 
   String startFile    = config.calendarStartFile;
