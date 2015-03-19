@@ -1,0 +1,1 @@
+for i in `ls *.csv`; do iconv --from-code ISO8859-1 --to-code utf-8 $i > $i.unicode; done
