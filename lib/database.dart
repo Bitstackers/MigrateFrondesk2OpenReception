@@ -153,6 +153,11 @@ class Database {
   Future createContactEvent(int receptionId, int contactId, int eventId) =>
       _createContactEvent(pool, receptionId, contactId, eventId);
 
+  Future createContactCalendarEntry(int receptionID, int contactID,
+                                    DateTime start, DateTime stop,
+                                    int userID, String content) =>
+    _createContactCalendarEntry(pool, receptionID, contactID, start, stop, userID, content);
+
   /* ***********************************************
      ************** DistributionList ***************
    */

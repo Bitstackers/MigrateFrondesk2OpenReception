@@ -198,13 +198,14 @@ Future createContact(Database db, int receptionId, Employee med) {
         rc.wantsMessages, rc.phoneNumbers, attributes, rc.contactEnabled, rc.dataContact,
         rc.statusEmail)
         .then((_) => db.createDistributionListEntry(rc.receptionId, rc.contactId, 'to', rc.receptionId, rc.contactId))
-        .whenComplete(() => handleEndpoints(med, rc, db));
-//        .whenComplete(() {
-//          List<CalendarEntry> entries = calendarEntries.where((c) => c.userId == med.MedID).toList();
-//
-//          return Future.forEach(entries, (CalendarEntry entry) => db.createEvent(entry.start, entry.end, entry.message)
-//              .then((int eventId) => db.createContactEvent(rc.receptionId, rc.contactId, eventId) ) );
-//    });
+        .whenComplete(() => handleEndpoints(med, rc, db))
+        .whenComplete(() {
+          List<CalendarEntry> entries = calendarEntries.where((c) => c.userId == med.MedID).toList();
+
+          const int USERID = 1;
+          return Future.forEach(entries, (CalendarEntry entry) => db.createContactCalendarEntry(
+              rc.receptionId, rc.contactId, entry.start, entry.end, USERID, entry.message));
+    });
   });
 }
 
