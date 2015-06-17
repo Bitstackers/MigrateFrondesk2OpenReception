@@ -31,13 +31,12 @@ class Database {
   Future start() {
     String connectString = 'postgres://${user}:${password}@${host}:${port}/${name}';
 
-    pool = new Pool(connectString, min: minimumConnections, max: maximumConnections);
+    pool = new Pool(connectString, minConnections: minimumConnections, maxConnections: maximumConnections);
     return pool.start().then((_) => _testConnection());
   }
 
-  void close() {
-    pool.destroy();
-  }
+  Future close() =>
+    pool.stop();
 
   Future _testConnection() => pool.connect().then((Connection conn) => conn.close());
 

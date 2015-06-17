@@ -14,12 +14,12 @@ AccessInstance Convert(Configuration config) {
 
   File csvFile = new File(config.company);
   String buffer = csvFile.readAsStringSync();
-  
+
   final decoder = new CsvToListConverter
        (fieldDelimiter: ';', parseNumbers: false, eol: '\n');
 
   List<String> headers;
-  
+
   List<List<String>> decodedCsv = decoder.convert(buffer);
 
     /// Cherry-pick the headers.
@@ -35,18 +35,18 @@ AccessInstance Convert(Configuration config) {
       });
 
       Company virk = mapVirksomhed(value);
-      print (virk.VirkIDnr);
+      //print (virk.VirkIDnr);
       instance.companies.add(virk);
   });
-  
+
   instance.companies.sort(Company.sortByVirkIDnr);
 
 
   // Clear headers.
   headers = [];
   csvFile = new File(config.employee);
-  buffer = csvFile.readAsStringSync(); 
-  
+  buffer = csvFile.readAsStringSync();
+
     decodedCsv = decoder.convert(buffer);
 
     /// Cherry-pick the headers.
