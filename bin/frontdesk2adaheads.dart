@@ -92,21 +92,14 @@ Future createReception(Company virk, Database db, int
           '${virk.VirkPostnr} ${virk.VirkPostby} ${virk.VirkAdr1}',
           '${virk.VirkPostnr2} ${virk.VirkPostby2} ${virk.VirkAdr2}'])
       ..registrationnumbers = noEmptyStrings([virk.VirkCVR])
-      ..telephonenumbers = noEmptyStrings([virk.VirkTlf1, virk.VirkTlf2])
+      ..telephonenumbers = [createVirkPhone(phoneNumberId++, virk.VirkTlf1),
+                            createVirkPhone(phoneNumberId++, virk.VirkTlf2)].where((e) => e != null).toList()
       ..bankinginformation = noEmptyStrings([virk.VirkBank_konto,
           virk.VirkGiro_konto])
       ..websites = noEmptyStrings([virk.VirkWWW])
       ..openinghours = noEmptyStrings([virk.VirkKontortid])
       ..emailaddresses = noEmptyStrings([virk.VirkEmail])
       ..receptionNumber = virk.VirkTH_nr;
-
-  if (virk.VirkFax1 != null && virk.VirkFax1.trim().isNotEmpty) {
-    recep.telephonenumbers.add('FAX ${virk.VirkFax1}');
-  }
-
-  if (virk.VirkFax2 != null && virk.VirkFax2.trim().isNotEmpty) {
-    recep.telephonenumbers.add('FAX ${virk.VirkFax2}');
-  }
 
   Employee openingshours = medarbejdere.firstWhere((e) => e.MedNavn.contains(
       'Åbningstider'), orElse: () => null);

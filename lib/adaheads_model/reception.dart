@@ -22,7 +22,7 @@ class Reception {
   List<String> handlings = [];
   List<String> openinghours = [];
   List<String> registrationnumbers = [];
-  List<String> telephonenumbers = [];
+  List<Phone> telephonenumbers = [];
   List<String> websites = [];
 
   Map get attributes =>
@@ -31,7 +31,7 @@ class Reception {
       'other': other != null ? other : '',
       'greeting': greeting != null ? greeting : '',
       'short_greeting': shortgreeting != null ? shortgreeting : (greeting != null ? greeting : ''),
-      'customertype': customertype != null ? customertype : [],
+      'customertypes': customertype != null ? customertype : [],
       'addresses': addresses,
       'alternatenames': alternatenames,
       'bankinginformation': bankinginformation,
