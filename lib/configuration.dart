@@ -51,7 +51,7 @@ class Configuration {
   }
 
   bool showHelp() => parsedArgs['help'];
-  String getUsage() => parser.getUsage();
+  String getUsage() => parser.getUsage;
   bool isValid() => _validArguments();
 
   bool _validArguments() {

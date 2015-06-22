@@ -1,7 +1,6 @@
 part of adaheads.model;
 
 class Phone {
-  int id;
   String value;
   String kind;
   String description;
@@ -12,12 +11,11 @@ class Phone {
   Phone();
 
   Map toJson() => {
-    'id': id != null ? id : 0,
-    'value': value != null ? value : '',
-    'kind': kind != null ? kind : '',
-    'description': description != null ? description : '',
-    'billing_type': billingType != null ? billingType : '',
-    'tag': tag != null ? tag : [],
-    'confidential': confidential != null ? confidential : false};
+    OR.PhoneNumberJSONKey.Value: value != null ? value : '',
+    OR.PhoneNumberJSONKey.Type: kind != null ? kind : '',
+    OR.PhoneNumberJSONKey.Description: description != null ? description : '',
+    OR.PhoneNumberJSONKey.Billing_type: billingType != null ? billingType : '',
+    OR.PhoneNumberJSONKey.Tag: tag != null ? tag : [],
+    OR.PhoneNumberJSONKey.Confidential: confidential != null ? confidential : false};
 }
 

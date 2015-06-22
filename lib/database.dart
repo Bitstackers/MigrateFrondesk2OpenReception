@@ -3,7 +3,7 @@ library adaheads.server.database;
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:postgresql/postgresql_pool.dart';
+import 'package:postgresql/pool.dart';
 import 'package:postgresql/postgresql.dart';
 
 import 'adaheads_model.dart' as adaheads_model;

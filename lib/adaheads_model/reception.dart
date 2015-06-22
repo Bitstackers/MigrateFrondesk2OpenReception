@@ -27,21 +27,21 @@ class Reception {
 
   Map get attributes =>
     {
-      'product': product != null ? product : '',
-      'other': other != null ? other : '',
-      'greeting': greeting != null ? greeting : '',
-      'short_greeting': shortgreeting != null ? shortgreeting : (greeting != null ? greeting : ''),
-      'customertypes': customertype != null ? customertype : [],
-      'addresses': addresses,
-      'alternatenames': alternatenames,
-      'bankinginformation': bankinginformation,
-      'salescalls': salesCalls,
-      'emailaddresses': emailaddresses,
-      'handlings': handlings,
-      'openinghours': openinghours,
-      'registrationnumbers': registrationnumbers,
-      'telephonenumbers': telephonenumbers,
-      'websites': websites
+    OR.ReceptionJSONKey.PRODUCT: product != null ? product : '',
+    OR.ReceptionJSONKey.OTHER: other != null ? other : '',
+    OR.ReceptionJSONKey.GREETING: greeting != null ? greeting : '',
+    OR.ReceptionJSONKey.SHORT_GREETING: shortgreeting != null ? shortgreeting : (greeting != null ? greeting : ''),
+    OR.ReceptionJSONKey.CUSTOMER_TYPES: customertype != null ? customertype : [],
+    OR.ReceptionJSONKey.ADDRESSES: addresses,
+    OR.ReceptionJSONKey.ALT_NAMES: alternatenames,
+    OR.ReceptionJSONKey.BANKING_INFO: bankinginformation,
+    OR.ReceptionJSONKey.SALES_MARKET_HANDLING: salesCalls,
+    OR.ReceptionJSONKey.EMAIL_ADDRESSES: emailaddresses,
+    OR.ReceptionJSONKey.HANDLING_INSTRUCTIONS: handlings,
+    OR.ReceptionJSONKey.OPENING_HOURS: openinghours,
+    OR.ReceptionJSONKey.VAT_NUMBERS: registrationnumbers,
+    OR.ReceptionJSONKey.PHONE_NUMBERS: telephonenumbers,
+    OR.ReceptionJSONKey.WEBSITES: websites
     };
 
   /**
@@ -51,13 +51,13 @@ class Reception {
 
   String toJson() {
     Map data = {
-      'id': id,
-      'orgaanization_id': organization_id,
-      'full_name': full_name,
-      'uri': uri,
-      'enabled': enabled,
-      'number': receptionNumber,
-      'attributes': attributes
+      OR.ReceptionJSONKey.ID: id,
+      OR.ReceptionJSONKey.ORGANIZATION_ID: organization_id,
+      OR.ReceptionJSONKey.FULL_NAME: full_name,
+      OR.ReceptionJSONKey.EXTRADATA_URI: uri,
+      OR.ReceptionJSONKey.ENABLED: enabled,
+      OR.ReceptionJSONKey.EXTENSION: receptionNumber,
+      OR.ReceptionJSONKey.ATTRIBUTES: attributes
     };
 
     return JSON.encode(data);

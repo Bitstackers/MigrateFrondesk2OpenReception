@@ -1,7 +1,13 @@
 name: Frontdesk2Adaheads
-description: Basic converter tool for migrating FrontDesk databases to OpenReception databases.
 version: 0.1.0
+description: Basic converter tool for migrating FrontDesk databases to OpenReception databases.
 dependencies:
   args: any
   csv: any
+  logging: any
+  openreception_framework:
+    git:
+      ref: master
+      url: https://github.com/BitStackers/OpenReceptionFramework.git
+    version: '> 0.0.24+9'
   postgresql: any

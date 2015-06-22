@@ -2,6 +2,8 @@ library adaheads.model;
 
 import 'dart:convert';
 
+import 'package:openreception_framework/model.dart' as OR;
+
 part 'adaheads_model/contact.dart';
 part 'adaheads_model/endpoint.dart';
 part 'adaheads_model/organization.dart';

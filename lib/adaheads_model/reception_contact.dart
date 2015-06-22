@@ -18,118 +18,108 @@ class ReceptionContact {
     _attributes = value;
   }
 
-  List<String> get backup => _attributes['backup'];
+  List<String> get backup => _attributes[OR.ContactJSONKey.backup];
   void set backup(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['backup'] = list;
+    _attributes[OR.ContactJSONKey.backup] = list;
   }
 
-  List<String> get emailaddresses => _attributes['emailaddresses'];
+  List<String> get emailaddresses => _attributes[OR.ContactJSONKey.emailaddresses];
   void set emailaddresses(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['emailaddresses'] = list;
+    _attributes[OR.ContactJSONKey.emailaddresses] = list;
   }
 
-  List<String> get handling => _attributes['handling'];
+  List<String> get handling => _attributes[OR.ContactJSONKey.handling];
   void set handling(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['handling'] = list;
+    _attributes[OR.ContactJSONKey.handling] = list;
   }
 
-  List<String> get workhours => _attributes['workhours'];
+  List<String> get workhours => _attributes[OR.ContactJSONKey.workhours];
   void set workhours(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['workhours'] = list;
+    _attributes[OR.ContactJSONKey.workhours] = list;
   }
 
-  List<String> get tags => _attributes['tags'];
+  List<String> get tags => _attributes[OR.ContactJSONKey.tags];
   void set tags(List<String> list) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['tags'] = list;
+    _attributes[OR.ContactJSONKey.tags] = list;
   }
 
-  String get department => _attributes['department'];
-  void set department(String value) {
+  List<String> get department => _attributes[OR.ContactJSONKey.departments];
+  void set department(List<String> value) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['department'] = value;
+    _attributes[OR.ContactJSONKey.departments] = value;
   }
 
-  String get info => _attributes['info'];
-  void set info(String value) {
+  List<String> get info => _attributes[OR.ContactJSONKey.infos];
+  void set info(List<String> value) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['info'] = value;
+    _attributes[OR.ContactJSONKey.infos] = value;
   }
 
-  String get position => _attributes['position'];
-  void set position(String value) {
+  List<String> get position => _attributes[OR.ContactJSONKey.titles];
+  void set position(List<String> value) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['position'] = value;
+    _attributes[OR.ContactJSONKey.titles] = value;
   }
 
-  String get relations => _attributes['relations'];
-  void set relations(String value) {
+  List<String> get relations => _attributes[OR.ContactJSONKey.relations];
+  void set relations(List<String> value) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['relations'] = value;
+    _attributes[OR.ContactJSONKey.relations] = value;
   }
 
-  String get responsibility => _attributes['responsibility'];
-  void set responsibility(String value) {
+  List<String> get responsibility => _attributes[OR.ContactJSONKey.responsibilities];
+  void set responsibility(List<String> value) {
     if(_attributes == null) {
       _attributes = {};
     }
-    _attributes['responsibility'] = value;
-  }
-
-  String get branch => _attributes['branch'];
-  void set branch(String value) {
-    if(_attributes == null) {
-      _attributes = {};
-    }
-    _attributes['branch'] = value;
+    _attributes[OR.ContactJSONKey.responsibilities] = value;
   }
 
   ReceptionContact() {
     attributes = {
-      'department': '',
-      'info': '',
-      'position': '',
-      'relations': '',
-      'responsibility': '',
-      'backup': [],
-      'emailaddresses': [],
-      'handling': [],
-      //'telephonenumbers': priorityListToJson(telephonenumbers),
-      'workhours': [],
-      'tags': [],
-      'branch': ''
+      OR.ContactJSONKey.departments: [],
+      OR.ContactJSONKey.infos: [],
+      OR.ContactJSONKey.titles: [],
+      OR.ContactJSONKey.relations: [],
+      OR.ContactJSONKey.responsibilities: [],
+      OR.ContactJSONKey.backup: [],
+      OR.ContactJSONKey.emailaddresses: [],
+      OR.ContactJSONKey.handling: [],
+      OR.ContactJSONKey.workhours: [],
+      OR.ContactJSONKey.tags: [],
     };
   }
 
   String toJson() {
     Map data = {
-      'contact_id': contactId,
-      'reception_id': receptionId,
-      'wants_messages': wantsMessages,
-      'enabled': contactEnabled,
-      'phonenumbers' : phoneNumbers,
+      OR.ContactJSONKey.contactID : contactId,
+      OR.ContactJSONKey.receptionID: receptionId,
+      OR.ContactJSONKey.wantsMessages: wantsMessages,
+      OR.ContactJSONKey.enabled: contactEnabled,
+      OR.ContactJSONKey.phones : phoneNumbers,
       'attributes': attributes
     };
 

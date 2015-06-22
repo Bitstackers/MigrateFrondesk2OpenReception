@@ -21,13 +21,13 @@ void main(List<String> args) {
     calendarEntries = acc.calendar;
     //acc.companies.forEach((v) => print(v.VirkNavn));
 
-    setupDatabase(config).then((Database db) {
-      return Future.wait(acc.companies.map((virk) => createOrganization(db, virk, acc.employees.where((m) => m.VirkID == virk.VirkIDnr).toList())) )
+    setupDatabase(config).then((Database db) async {
+      await Future.wait(acc.companies.map((virk) => createOrganization(db, virk, acc.employees.where((m) => m.VirkID == virk.VirkIDnr).toList())) )
           .whenComplete(() => db.close()).then((_) {
         print('Completed. Added ${acc.companies.length} companies and ${acc.employees.length} employees');
       });
 
-      //manualCheck(db, acc);
+      manualCheck(db, acc);
     });
   }
 }
@@ -46,25 +46,28 @@ void manualCheck(Database db, AccessInstance acc) {
     }
   }
 
-  for (var virk in acc.companies) {
-    if (virk.VirkIDnr == 33170197) {
-      print(virk.VirkNavn);
-    }
-  }
+//  for (var virk in acc.companies) {
+//    if (virk.VirkIDnr == 33170197) {
+//      print(virk.VirkNavn);
+//    }
+//  }
 
   for (Employee med in acc.employees) {
-    if (numberIsBroken(med.MedDirTlf)) {
-      print('Navn: ${med.MedNavn}. DirTlf: ${med.MedDirTlf}');
+    if('${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}'.trim() != '') {
+      print('[${med.MedNavn}] [${med.MedEmail}] ${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}'.trim());
     }
-    if (numberIsBroken(med.MedMobil)) {
-      print('Navn: ${med.MedNavn}. Mobil: ${med.MedMobil}');
-    }
-    if (numberIsBroken(med.MedHasterTlf)) {
-      print('Navn: ${med.MedNavn}. HasterTlf: ${med.MedHasterTlf}');
-    }
-    if (numberIsBroken(med.MedPrivTlf)) {
-      print('Navn: ${med.MedNavn}. PrivTlf: ${med.MedPrivTlf}');
-    }
+//    if (numberIsBroken(med.MedDirTlf)) {
+//      print('Navn: ${med.MedNavn}. DirTlf: ${med.MedDirTlf}');
+//    }
+//    if (numberIsBroken(med.MedMobil)) {
+//      print('Navn: ${med.MedNavn}. Mobil: ${med.MedMobil}');
+//    }
+//    if (numberIsBroken(med.MedHasterTlf)) {
+//      print('Navn: ${med.MedNavn}. HasterTlf: ${med.MedHasterTlf}');
+//    }
+//    if (numberIsBroken(med.MedPrivTlf)) {
+//      print('Navn: ${med.MedNavn}. PrivTlf: ${med.MedPrivTlf}');
+//    }
   }
 
   print('complete');
@@ -92,8 +95,8 @@ Future createReception(Company virk, Database db, int
           '${virk.VirkPostnr} ${virk.VirkPostby} ${virk.VirkAdr1}',
           '${virk.VirkPostnr2} ${virk.VirkPostby2} ${virk.VirkAdr2}'])
       ..registrationnumbers = noEmptyStrings([virk.VirkCVR])
-      ..telephonenumbers = [createVirkPhone(phoneNumberId++, virk.VirkTlf1),
-                            createVirkPhone(phoneNumberId++, virk.VirkTlf2)].where((e) => e != null).toList()
+      ..telephonenumbers = [createVirkPhone(virk.VirkTlf1),
+                            createVirkPhone(virk.VirkTlf2)].where((e) => e != null).toList()
       ..bankinginformation = noEmptyStrings([virk.VirkBank_konto,
           virk.VirkGiro_konto])
       ..websites = noEmptyStrings([virk.VirkWWW])
@@ -135,23 +138,23 @@ Future createContact(Database db, int receptionId, Employee med) {
         ..contactId = contactId
         ..wantsMessages = med.MedIngenFax == '0' && med.MedIngenEmail == '0' &&
             med.MedIngenSMS == '0'
-        ..position = med.MedStilling
-        ..department = med.MedAfd
+        ..position = [med.MedStilling]
+        ..department = ['${med.MedAfd}${branchInfo(med.MedPostnr, med.MedPostby, med.MedAdr)}']
         //TODO is this still used?
         ..emailaddresses = noEmptyStrings([med.MedEmail, med.MedPrivatEmail])
-        ..responsibility = med.MedAnsvarsomraade
-        ..info = med.MedNote
+        ..responsibility = [med.MedAnsvarsomraade]
+        ..info = [med.MedNote]
         ..handling = noEmptyStrings([med.MedTHMail])
         ..statusEmail = med.statusmail == '1'
-        ..branch = '${med.MedPostnr} ${med.MedPostby} ${med.MedAdr}'.trim()
+        ..tags = contactTags(med.MedAnsvarsomraade)
         ..contactEnabled = true;
 
     //These code blocks here, rely on the fact that "makePhone" returns a null,
     // if there are no data, to make a number out of.
-    List<Phone> phoneNumbers = [createPhone(phoneNumberId++, med.MedDirTlf,
-        med.MedDirTlfOpl, 'Direkte'), createPhone(phoneNumberId++, med.MedMobil,
-        med.MedMobilOpl, 'Mobil'), createPhone(phoneNumberId++, med.MedHasterTlf,
-        med.MedHasterTlfOpl, 'Haster'), createPhone(phoneNumberId++, med.MedPrivTlf,
+    List<Phone> phoneNumbers = [createPhone(med.MedDirTlf,
+        med.MedDirTlfOpl, 'Direkte'), createPhone(med.MedMobil,
+        med.MedMobilOpl, 'Mobil'), createPhone(med.MedHasterTlf,
+        med.MedHasterTlfOpl, 'Haster'), createPhone(med.MedPrivTlf,
         med.MedPrivTlfOpl, 'Privat')];
 
     if (med.MedPrimNummer == '2') {
@@ -294,4 +297,20 @@ Endpoint extractEndpoint(String text) {
         ..address = text
         ..addressType = 'email';
   }
+}
+
+String branchInfo(String MedPostnr, String MedPostby, String MedAdr) {
+  String result = '${MedPostnr} ${MedPostby} ${MedAdr}'.trim();
+  if(result != "") {
+    return ' $result';
+  } else {
+    return '';
+  }
+}
+
+List<String> contactTags(String responsability) {
+  List<String> knownTags = ['Bogholderi', 'Jobansøger', 'Klager', 'Ny kunde', 'Salg', 'Support', 'Uadresserede kald'];
+
+  String textAsLower = responsability.toLowerCase();
+  return knownTags.where((String tag) => textAsLower.contains(tag.toLowerCase())).toList();
 }

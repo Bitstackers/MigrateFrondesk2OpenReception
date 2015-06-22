@@ -14,13 +14,12 @@ List<String> noEmptyStrings(Iterable<String> list) {
   return newlist;
 }
 
-Phone createVirkPhone(int id, String number) {
+Phone createVirkPhone(String number) {
   if(number == null || number.trim().isEmpty || number.trim() == 'null') {
     return null;
   }
 
   Phone obj = new Phone()
-    ..id = id
     ..value = number
     ..confidential = false
     ..description = ''
@@ -30,7 +29,7 @@ Phone createVirkPhone(int id, String number) {
   return obj;
 }
 
-Phone createPhone(int id, String number, String oplys, String beskrivelse, [String kind = 'PSTN']) {
+Phone createPhone(String number, String oplys, String beskrivelse, [String kind = 'PSTN']) {
   if(number == null || number.trim().isEmpty ||
      oplys == null || oplys.trim().isEmpty) {
     return null;
@@ -42,7 +41,6 @@ Phone createPhone(int id, String number, String oplys, String beskrivelse, [Stri
   }
 
   Phone obj = new Phone()
-    ..id = id
     ..confidential = oplys == '1' ? true : false
     ..description = beskrivelse
     ..kind = kind;
