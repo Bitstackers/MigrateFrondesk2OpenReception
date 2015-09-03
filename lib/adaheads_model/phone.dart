@@ -11,11 +11,11 @@ class Phone {
   Phone();
 
   Map toJson() => {
-    OR.PhoneNumberJSONKey.Value: value != null ? value : '',
-    OR.PhoneNumberJSONKey.Type: kind != null ? kind : '',
-    OR.PhoneNumberJSONKey.Description: description != null ? description : '',
-    OR.PhoneNumberJSONKey.Billing_type: billingType != null ? billingType : '',
-    OR.PhoneNumberJSONKey.Tag: tag != null ? tag : [],
-    OR.PhoneNumberJSONKey.Confidential: confidential != null ? confidential : false};
+    Key.value: value != null ? value : '',
+    Key.type: kind != null ? kind : '',
+    Key.description: description != null ? description : '',
+    Key.billingType: billingType != null ? billingType : '',
+    Key.tag: tag != null ? tag : [],
+    Key.confidential: confidential != null ? confidential : false
+  };
 }
-
